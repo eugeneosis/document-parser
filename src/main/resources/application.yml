@@ -1,0 +1,5 @@
+inputFolder:
+  path: /Users/evgeny/Downloads/documents/
+
+outputFile:
+  path: /Users/evgeny/Downloads/parse-documents/
