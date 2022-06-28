@@ -1,7 +1,12 @@
 package ru.fau.nia.dto.pdf.table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
 import java.util.Collection;
 
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TableCell implements TableItem {
     private String cellValue;
 

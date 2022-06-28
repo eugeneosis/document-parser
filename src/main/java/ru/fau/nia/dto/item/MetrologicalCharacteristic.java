@@ -1,9 +1,11 @@
 package ru.fau.nia.dto.item;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import ru.fau.nia.entity.DictOkei;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MetrologicalCharacteristic {
     private String from;
     private String to;

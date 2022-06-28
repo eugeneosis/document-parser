@@ -1,5 +1,7 @@
 package ru.fau.nia.dto.pdf;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import ru.fau.nia.dto.AccreditationLine;
@@ -12,8 +14,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-@Getter
-@Setter
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DeclarationPdfDatasource {
     private String accreditedEntityType;
     private String firstPartOfAccreditedEntityTypeName;

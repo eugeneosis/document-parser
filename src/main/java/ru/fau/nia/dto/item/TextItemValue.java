@@ -1,9 +1,11 @@
 package ru.fau.nia.dto.item;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +13,8 @@ import ru.fau.nia.entity.TableColumnHasRowField;
 
 import java.io.IOException;
 
-@Setter
-@Getter
-@EqualsAndHashCode
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TextItemValue implements ItemValue {
     @JsonDeserialize(using = StringDeserializer.class)
     private String value;

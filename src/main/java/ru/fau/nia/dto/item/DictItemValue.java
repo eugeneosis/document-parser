@@ -1,15 +1,16 @@
 package ru.fau.nia.dto.item;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import ru.fau.nia.entity.TableColumnHasRowField;
 
-@Setter
-@Getter
-@EqualsAndHashCode
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DictItemValue implements ItemValue {
     private DictionaryDto value;
 

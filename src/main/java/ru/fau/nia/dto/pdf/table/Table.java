@@ -1,10 +1,14 @@
 package ru.fau.nia.dto.pdf.table;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import ru.fau.nia.entity.DictBusinessLineType;
 
 import java.util.Collection;
 
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Table implements TableItem {
     private DictBusinessLineType businessLineType;
     private Collection<? extends TableItem> collection;

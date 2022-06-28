@@ -1,6 +1,7 @@
 package ru.fau.nia.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,7 +11,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.util.Objects;
 
 @Data
-@EqualsAndHashCode(exclude = "isArchive")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Address {
 
     private AddressOksm country;

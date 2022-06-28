@@ -1,5 +1,6 @@
 package ru.fau.nia.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import ru.fau.nia.entity.DictNormDocType;
 
@@ -7,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SelectedMethodology {
     private Integer id;
     private String name;

@@ -1,6 +1,7 @@
 package ru.fau.nia.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import ru.fau.nia.dto.item.DictionaryDto;
@@ -21,38 +23,38 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Setter
-@Getter
+@Data
 @JacksonXmlRootElement(localName = "declaration")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Declaration {
 
-    @JsonProperty("version")
+    @JacksonXmlProperty(localName = "version")
     private int version = 1;
 
-    @JsonProperty("accreditedEntityName")
+    @JacksonXmlProperty(localName = "accreditedEntityName")
     private String accreditedEntityName;
 
-    @JsonProperty("certificateNumber")
-    @JsonDeserialize(using = RegNumDeserializer.class)
+    @JacksonXmlProperty(localName = "certificateNumber")
+    //@JsonDeserialize(using = RegNumDeserializer.class)
     private DictionaryDto certificateNumber;
 
-    @JsonProperty("declarantName")
+    @JacksonXmlProperty(localName = "declarantName")
     private String declarantName;
 
-    @JsonProperty("declarantTaxNumber")
+    @JacksonXmlProperty(localName = "declarantTaxNumber")
     private String declarantTaxNumber;
 
-    @JsonProperty("declarationInfo")
-    private DeclarationInfo declarationInfo;
+    //@JacksonXmlProperty(localName = "declarationInfo")
+    //private DeclarationInfo declarationInfo;
 
     @JacksonXmlElementWrapper(localName = "accreditationLines")
     @JacksonXmlProperty(localName = "accreditationLine")
-    @JsonProperty("accreditationLines")
     private Collection<AccreditationLine> accreditationLines = new ArrayList<>();
 
-    @JsonProperty("lastChangeDate")
+    @JacksonXmlProperty(localName = "lastChangeDate")
     private LocalDate lastChangeDate;
 
+    @JacksonXmlProperty(localName = "manuallyAddedDocuments")
     private Collection<DictionaryDto> manuallyAddedDocuments;
 
     @JsonIgnore
@@ -62,12 +64,12 @@ public class Declaration {
         }
     }
 
-    @JsonIgnore
+  /*  @JsonIgnore
     public void accept(DeclarationVisitor visitor) {
         visitor.visit(this);
         visitor.visit((Item) declarationInfo);
         accreditationLines.forEach(o -> o.accept(visitor));
-    }
+    }*/
 
     public static class RegNumDeserializer extends JsonDeserializer<DictionaryDto> {
 

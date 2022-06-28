@@ -1,14 +1,15 @@
 package ru.fau.nia.dto.item;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.fau.nia.entity.TableColumnHasRowField;
 
-@Setter
-@Getter
-@EqualsAndHashCode
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TextArrayItemValue implements ItemValue {
 
     @JsonDeserialize(using = StringDeserializer.class)

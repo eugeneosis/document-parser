@@ -1,5 +1,6 @@
 package ru.fau.nia.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import ru.fau.nia.dto.item.Item;
 import ru.fau.nia.dto.pdf.table.TableCell;
@@ -8,6 +9,7 @@ import ru.fau.nia.dto.pdf.table.TableItem;
 import java.util.Collection;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DictBusinessLineType {
 
     private Integer id;

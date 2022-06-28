@@ -1,6 +1,8 @@
 package ru.fau.nia.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,9 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Setter
-@Getter
-@EqualsAndHashCode(exclude = {"indexNumber"})
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AccreditationItem implements TableItem {
 
     private Integer indexNumber;

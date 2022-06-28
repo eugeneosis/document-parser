@@ -1,14 +1,10 @@
 package ru.fau.nia.dto;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@NoArgsConstructor
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateSignResponseDto {
     private String url;
     private String operationId;

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,14 +13,12 @@ import ru.fau.nia.entity.DictNormDocType;
 
 import java.util.Date;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DictionaryDto {
     private Integer id;
-    @JsonProperty("name")
+
+    @JacksonXmlProperty(localName = "name")
     private String value;
     private String code;
     private boolean isAnyChildren;
@@ -44,10 +44,10 @@ public class DictionaryDto {
     private boolean custom;
     private boolean hidden;
 
-    @JsonProperty("addedManually")
+    @JacksonXmlProperty(localName = "addedManually")
     private boolean isAddedManually;
 
-    @JsonProperty("isMandatory")
+    @JacksonXmlProperty(localName = "isMandatory")
     private boolean isMandatory;
 
     @JsonIgnore

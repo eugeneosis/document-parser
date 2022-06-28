@@ -1,7 +1,9 @@
 package ru.fau.nia.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,9 +12,8 @@ import ru.fau.nia.entity.DictBase;
 /**
  * Адрес из ФИАС. Номер дома
  */
-@Getter
-@Setter
-@ToString
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AddressFiasHouse implements DictBase {
 
 

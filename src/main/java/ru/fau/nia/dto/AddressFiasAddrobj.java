@@ -1,6 +1,7 @@
 package ru.fau.nia.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
  * Адрес из ФИАС. Может содержать любой из элементов адреса, кроме: название страны, номер дома и номер квартиры
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AddressFiasAddrobj implements DictBase {
 
 

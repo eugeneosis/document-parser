@@ -81,11 +81,11 @@ public class DocumentService {
 
             ObjectMapper objectMapper = new XmlMapper();
             Declaration pojo = objectMapper.readValue(pdfToXml, Declaration.class);
-            System.out.println(pojo);
-            System.out.println(pdfToXml);
+            //System.out.println(pojo);
+            //System.out.println(pdfToXml);
             String value = pojo.getCertificateNumber().getValue();
             System.out.println(value);
-            Item item = objectMapper.readValue(pdfToXml, Item.class);
+            //Item item = objectMapper.readValue(pdfToXml, Item.class);
             //List<String> collect = item.getValues().stream().map(ru.fau.nia.dto.item.Value::getCode).collect(Collectors.toList());
             //System.out.println(collect);
             //printToFile(textFromDocument);

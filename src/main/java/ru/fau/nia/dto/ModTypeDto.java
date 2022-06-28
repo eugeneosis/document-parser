@@ -7,8 +7,6 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
 @Data
-@Accessors(chain = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ModTypeDto {
 

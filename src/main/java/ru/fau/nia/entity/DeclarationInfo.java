@@ -1,8 +1,10 @@
 package ru.fau.nia.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DeclarationInfo {
 
     private Integer id;
@@ -16,5 +18,4 @@ public class DeclarationInfo {
     private String declarationSubTitle;
 
     private String underscoreEntityTitle;
-
 }

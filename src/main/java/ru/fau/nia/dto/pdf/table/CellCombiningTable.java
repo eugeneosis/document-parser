@@ -1,5 +1,7 @@
 package ru.fau.nia.dto.pdf.table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 import ru.fau.nia.dto.AccreditationItem;
 import ru.fau.nia.entity.DictBusinessLineType;
 
@@ -7,6 +9,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CellCombiningTable implements TableItem {
     private Integer columnNumber;
     private Collection<AccreditationItem> accreditationItems;
