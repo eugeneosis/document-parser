@@ -18,6 +18,7 @@ import ru.fau.nia.dto.AccreditationItem;
 import ru.fau.nia.dto.Declaration;
 import ru.fau.nia.dto.item.DictionaryDto;
 import ru.fau.nia.dto.item.Item;
+import ru.fau.nia.dto.item.ItemValue;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -85,9 +86,11 @@ public class DocumentService {
             //System.out.println(pdfToXml);
             String value = pojo.getCertificateNumber().getValue();
             System.out.println(value);
-            //Item item = objectMapper.readValue(pdfToXml, Item.class);
-            //List<String> collect = item.getValues().stream().map(ru.fau.nia.dto.item.Value::getCode).collect(Collectors.toList());
-            //System.out.println(collect);
+            AccreditationItem item = objectMapper.readValue(pdfToXml, AccreditationItem.class);
+
+            List<String> collect = item.getItems().stream().map(Item::getCode).collect(Collectors.toList());
+
+            System.out.println(collect);
             //printToFile(textFromDocument);
         }
         document.close();

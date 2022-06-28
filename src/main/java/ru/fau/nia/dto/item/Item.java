@@ -1,6 +1,7 @@
 package ru.fau.nia.dto.item;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ru.fau.nia.entity.TableColumnHasRowField;
@@ -14,6 +15,7 @@ import ru.fau.nia.entity.TableColumnHasRowField;
         @JsonSubTypes.Type(value = BaseItem.class, name = "dictionary"),
         @JsonSubTypes.Type(value = NormativeDocumentItem.class, name = "normativeDocument")
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public interface Item extends ColumnDivided {
 
     String getName();
