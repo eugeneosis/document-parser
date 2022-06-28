@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.fau.nia.dto.AccreditationLine;
 import ru.fau.nia.dto.Declaration;
+import ru.fau.nia.entity.DictBusinessLineType;
 
 
 import java.util.ArrayList;
@@ -31,19 +32,6 @@ public class DeclarationPdfDatasource {
         if (declaration.getCertificateNumber() != null) {
             this.certificationNumber = declaration.getCertificateNumber().getValue();
         }
-        try {
-            DictBusinessLineType businessLineType = businessLineTypes.stream().findFirst().get();
-            this.firstPartOfAccreditedEntityTypeName = ACCREDITATION_AREA;
-            this.secondPartOfAccreditedEntityTypeName = businessLineType.getAccreditationBodyType().getValue();
-            this.underScoreAccreditedEntityTypeName = businessLineType.getAccreditedEntityType().getUnderScoreName();
-        } catch (NoSuchElementException ignore) {
-        }
-
-        this.accreditedEntityType = declaration.getDeclarationInfo().getAccreditedEntityType().getValue();
-        this.accreditationTypeId = declaration.getDeclarationInfo().getAccreditationType().getId();
-        this.addresses = declaration.getAccreditationLines().stream()
-                .map(line -> line.getAddress().getActualAddress())
-                .collect(Collectors.toList());
 
         lines = new ArrayList<>();
         for (AccreditationLine line1 : declaration.getAccreditationLines()) {

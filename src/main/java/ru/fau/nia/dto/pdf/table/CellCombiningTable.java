@@ -1,6 +1,7 @@
 package ru.fau.nia.dto.pdf.table;
 
 import ru.fau.nia.dto.AccreditationItem;
+import ru.fau.nia.entity.DictBusinessLineType;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,22 +20,6 @@ public class CellCombiningTable implements TableItem {
         this.accreditationItems = accreditationItems;
         this.businessLineType = businessLineType;
         this.cellCombiningInstructions = cellCombiningInstructions;
-    }
-
-    @Override
-    public Collection<TableItem> getRows() {
-        int[] i = {0};
-        return businessLineType.getGroupedByColumn(columnNumber, accreditationItems)
-                .values()
-                .stream()
-                .map(items -> new CellCombiningRow(
-                        columnNumber,
-                        items,
-                        businessLineType,
-                        cellCombiningInstructions,
-                        ++i[0]))
-                .sorted(cellCombiningInstructions.get(columnNumber).getComparator())
-                .collect(Collectors.toList());
     }
 
     @Override

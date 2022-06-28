@@ -34,7 +34,7 @@ public class NormativeDocumentItemValue implements ItemValue {
 
     @Override
     public String getPrintedFormValue(TableColumnHasRowField rowField, Integer accreditationBodyTypeId, int columnNumber) {
-        String result = rowField.getPrintedFormValue(value);
+        String result = rowField.toString();
         if (result == null) {
             result = value.getCode();
         }

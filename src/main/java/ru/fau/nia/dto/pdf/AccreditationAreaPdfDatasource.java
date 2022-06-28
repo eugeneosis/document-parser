@@ -1,17 +1,18 @@
 package ru.fau.nia.dto.pdf;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import ru.fau.nia.dto.AccreditationItem;
 import ru.fau.nia.dto.pdf.table.CellCombiningRow;
 import ru.fau.nia.dto.pdf.table.Table;
 import ru.fau.nia.dto.pdf.table.TableItem;
+import ru.fau.nia.entity.DictBusinessLineType;
 
 import java.util.*;
 
 
-@Getter
-@Setter
+@Data
 public class AccreditationAreaPdfDatasource {
     private String prefix;
     private Boolean isGroup = false;

@@ -86,8 +86,8 @@ public class DocumentService {
             String value = pojo.getCertificateNumber().getValue();
             System.out.println(value);
             Item item = objectMapper.readValue(pdfToXml, Item.class);
-            List<String> collect = item.getValues().stream().map(ru.fau.nia.dto.item.Value::getCode).collect(Collectors.toList());
-            System.out.println(collect);
+            //List<String> collect = item.getValues().stream().map(ru.fau.nia.dto.item.Value::getCode).collect(Collectors.toList());
+            //System.out.println(collect);
             //printToFile(textFromDocument);
         }
         document.close();

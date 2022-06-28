@@ -35,7 +35,7 @@ public class DictItemValue implements ItemValue {
 
     public String getPrintedFormValue(TableColumnHasRowField rowField, Integer accreditationBodyTypeId, int columnNumber) {
         final StringBuilder builder = new StringBuilder();
-        String result = rowField.getPrintedFormValue(value);
+        String result = rowField.toString();
         if (result == null) {
             result = value.getValue();
         }

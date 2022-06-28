@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ru.fau.nia.entity.TableColumnHasRowField;
-import ru.parma.fgis.oa.data.entity.conf.TableColumnHasRowField;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -44,7 +43,7 @@ public interface Item extends ColumnDivided {
         return null;
     }
 
-    @JsonIgnore
+
     String getCode();
 
     @JsonIgnore

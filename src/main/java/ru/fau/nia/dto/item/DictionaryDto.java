@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import ru.parma.fgis.oa.dictionary.entity.DictNormDocType;
+import ru.fau.nia.entity.DictNormDocType;
 
 import java.util.Date;
 

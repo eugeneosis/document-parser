@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import ru.fau.nia.entity.DictCode;
 import ru.fau.nia.entity.TableColumnHasRowField;
 
 @JsonTypeInfo(

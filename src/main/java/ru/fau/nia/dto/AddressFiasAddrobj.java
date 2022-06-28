@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import ru.fau.nia.entity.DictBase;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -16,7 +17,7 @@ import java.util.stream.Stream;
 public class AddressFiasAddrobj implements DictBase {
 
 
-    private String id;      // GUID
+    private String id;
 
     @JsonIgnore
     private String name;

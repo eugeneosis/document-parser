@@ -27,7 +27,7 @@ public class RangeItemValue implements ItemValue, ColumnDivided {
 
     @Override
     public String getPrintedFormValue(TableColumnHasRowField rowField, Integer accreditationBodyTypeId, int columnNumber) {
-        return rowField.getPrintedFormValue(value);
+        return rowField.toString();
     }
 
     @JsonIgnore

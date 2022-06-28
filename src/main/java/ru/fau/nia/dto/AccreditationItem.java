@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.fau.nia.dto.item.Item;
 import ru.fau.nia.dto.pdf.table.TableItem;
+import ru.fau.nia.entity.DictBusinessLineType;
 
 import java.util.Collection;
 import java.util.List;

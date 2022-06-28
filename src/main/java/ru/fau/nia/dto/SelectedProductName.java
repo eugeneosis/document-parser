@@ -1,6 +1,6 @@
 package ru.fau.nia.dto;
 
-import ru.parma.fgis.oa.dictionary.entity.DictOkpd2;
+import ru.fau.nia.entity.DictOkpd2;
 
 import java.util.List;
 

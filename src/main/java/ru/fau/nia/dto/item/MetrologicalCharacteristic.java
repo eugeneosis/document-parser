@@ -1,7 +1,7 @@
 package ru.fau.nia.dto.item;
 
 import lombok.Data;
-import ru.parma.fgis.oa.dictionary.entity.DictOkei;
+import ru.fau.nia.entity.DictOkei;
 
 @Data
 public class MetrologicalCharacteristic {

@@ -1,6 +1,7 @@
 package ru.fau.nia.dto;
 
 import lombok.Data;
+import ru.fau.nia.entity.DictNormDocType;
 
 import java.util.Date;
 import java.util.List;

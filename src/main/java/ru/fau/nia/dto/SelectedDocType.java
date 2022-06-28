@@ -1,7 +1,7 @@
 package ru.fau.nia.dto;
 
 import lombok.Data;
-import ru.parma.fgis.oa.dictionary.entity.DictNormDocType;
+import ru.fau.nia.entity.DictNormDocType;
 
 @Data
 public class SelectedDocType {

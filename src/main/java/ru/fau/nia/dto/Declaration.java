@@ -13,6 +13,8 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 import ru.fau.nia.dto.item.DictionaryDto;
+import ru.fau.nia.dto.item.Item;
+import ru.fau.nia.entity.DeclarationInfo;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -63,7 +65,7 @@ public class Declaration {
     @JsonIgnore
     public void accept(DeclarationVisitor visitor) {
         visitor.visit(this);
-        visitor.visit(declarationInfo);
+        visitor.visit((Item) declarationInfo);
         accreditationLines.forEach(o -> o.accept(visitor));
     }
 

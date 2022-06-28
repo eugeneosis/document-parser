@@ -31,7 +31,7 @@ public class AccreditationLine implements Cloneable {
         Map<String, AccreditationLine> map = new LinkedHashMap<>();
         String printedFormTemplate;
         for (AccreditationAreas accreditationArea : accreditationAreas) {
-            printedFormTemplate = accreditationArea.getPrintedFormTemplate();
+            printedFormTemplate = accreditationArea.getCode();
             AccreditationLine accreditationLine = map.get(printedFormTemplate);
             if (accreditationLine == null) {
                 try {
@@ -63,7 +63,7 @@ public class AccreditationLine implements Cloneable {
         String result = null;
         String current;
         for (AccreditationAreas accreditationArea : accreditationAreas) {
-            current = accreditationArea.getPrintedFormTemplate();
+            current = accreditationArea.getCode();
             if (result == null) {
                 result = current;
             }

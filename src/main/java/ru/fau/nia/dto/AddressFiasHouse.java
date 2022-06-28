@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.parma.fgis.oa.dictionary.entity.support.DictBase;
-
-import javax.persistence.Column;
-import javax.persistence.Id;
+import ru.fau.nia.entity.DictBase;
 
 /**
  * Адрес из ФИАС. Номер дома

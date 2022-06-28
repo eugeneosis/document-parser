@@ -1,6 +1,8 @@
 package ru.fau.nia.dto.pdf.table;
 
 
+import ru.fau.nia.entity.DictBusinessLineType;
+
 import java.util.Collection;
 
 public class Table implements TableItem {

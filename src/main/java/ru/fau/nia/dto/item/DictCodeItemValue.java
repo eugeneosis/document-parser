@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.fau.nia.entity.TableColumnHasRowField;
-import ru.parma.fgis.oa.data.entity.conf.TableColumnHasRowField;
 
 @Setter
 @Getter
@@ -33,7 +32,7 @@ public class DictCodeItemValue implements ItemValue {
     }
 
     public String getPrintedFormValue(TableColumnHasRowField rowField, Integer accreditationBodyTypeId, int columnNumber) {
-        String result = rowField.getPrintedFormValue(value);
+        String result = rowField.toString();
         if (result == null) {
             result = value.getCode();
         }

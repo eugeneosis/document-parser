@@ -4,11 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.CollectionUtils;
-import ru.parma.fgis.oa.dictionary.entity.DictBusinessLineType;
+import ru.fau.nia.entity.DictBusinessLineType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +45,6 @@ public class AccreditationAreas {
             }
             accreditationItem.setBusinessLineType(businessLineType);
         }
-    }
-
-    @JsonIgnore
-    public String getPrintedFormTemplate() {
-        return businessLineType.getPrintedFormTable().getPrintedFormTemplate();
     }
 
     @JsonIgnore

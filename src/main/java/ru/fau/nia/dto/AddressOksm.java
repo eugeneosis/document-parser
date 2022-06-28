@@ -2,6 +2,7 @@ package ru.fau.nia.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import ru.fau.nia.entity.DictBase;
 
 
 /**

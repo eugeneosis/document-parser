@@ -1,8 +1,8 @@
 package ru.fau.nia.dto;
 
 import ru.fau.nia.dto.item.Item;
-import ru.parma.fgis.oa.data.entity.conf.DeclarationInfo;
-import ru.parma.fgis.oa.dictionary.entity.DictBusinessLineType;
+import ru.fau.nia.entity.DeclarationInfo;
+import ru.fau.nia.entity.DictBusinessLineType;
 
 public interface DeclarationVisitor {
     void visit(Declaration declaration);

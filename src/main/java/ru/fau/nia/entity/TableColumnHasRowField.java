@@ -16,8 +16,8 @@ public class TableColumnHasRowField {
 
     private String name;
 
-    @JsonIgnore
-    private RowField rowField;
+    //@JsonIgnore
+    //private RowField rowField;
 
 
     @JsonIgnore
@@ -31,11 +31,11 @@ public class TableColumnHasRowField {
 
     private String eachElementEnd;
 
-    private List<ObjectField> objectFields;
+    //private List<ObjectField> objectFields;
 
-    public String getName() {
+    /*public String getName() {
         return name == null ? rowField.getName() : name;
-    }
+    }*/
 
     @JsonIgnore
     public String getPrintedFormDelimiter(String delimiter) {
@@ -49,7 +49,7 @@ public class TableColumnHasRowField {
         return delimiter;
     }
 
-    public String getPrintedFormValue(Object object) {
+    /*public String getPrintedFormValue(Object object) {
         String name;
         StringBuilder builder = new StringBuilder();
         Field field;
@@ -85,7 +85,7 @@ public class TableColumnHasRowField {
         }
 
         return null;
-    }
+    }*/
 
     public String getStart() {
         if (start == null && "validationScheme".equals(getName())) {
@@ -101,12 +101,12 @@ public class TableColumnHasRowField {
         return end;
     }
 
-    @Override
+   /* @Override
     public int hashCode() {
         return Objects.hash(rowField.getId(), tableColumnId);
-    }
+    }*/
 
-    @Override
+   /* @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof TableColumnHasRowField)) {
             return false;
@@ -114,5 +114,5 @@ public class TableColumnHasRowField {
         TableColumnHasRowField tc = (TableColumnHasRowField) obj;
 
         return Objects.equals(tc.rowField.getId(), rowField.getId()) && Objects.equals(tc.tableColumnId, tableColumnId);
-    }
+    }*/
 }

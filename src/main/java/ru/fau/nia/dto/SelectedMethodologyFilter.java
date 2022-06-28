@@ -1,8 +1,8 @@
 package ru.fau.nia.dto;
 
 import lombok.Data;
-import ru.parma.fgis.oa.data.entity.conf.RowFieldFilter;
-import ru.parma.fgis.oa.dictionary.entity.DictNormDocType;
+import ru.fau.nia.entity.DictNormDocType;
+import ru.fau.nia.entity.RowFieldFilter;
 
 @Data
 public class SelectedMethodologyFilter {

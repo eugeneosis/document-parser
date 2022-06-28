@@ -6,6 +6,7 @@ import ru.fau.nia.dto.AccreditationAreas;
 import ru.fau.nia.dto.AccreditationItem;
 import ru.fau.nia.dto.AccreditationLine;
 import ru.fau.nia.dto.Declaration;
+import ru.fau.nia.entity.DictBusinessLineType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,27 +26,10 @@ public class AddressPdfDatasource {
         this.printedFormTemplate = accreditationLine.getPrintedFormTemplate();
         this.accreditationAreas = new ArrayList<>();
         String entityPrefix = "";
-        DictAccreditationBodyType entityType = declaration.getDeclarationInfo().getAccreditedEntityType();
-
-        entityPrefix = setEntityPrefix(entityType.getId());
-
-        if (entityPrefix.isEmpty()) {
-            Optional<Integer> id = accreditationLine.getAccreditationAreas().stream().map(area -> area.getBusinessLineType().getAccreditationBodyType().getId())
-                    .findFirst();
-            if (id.isPresent())
-                entityPrefix = setEntityPrefix(id.get());
-        }
 
         Optional<DictBusinessLineType> optional = businessLineTypes.stream().findFirst();
 
-        if (optional.isPresent() && optional.get().isPrintedFormHasGroups()) {
-            addMandatoryTypeGroup("Обязательная сертификация продукции", 1, entityPrefix, "A",
-                    businessLineTypes, accreditationLine);
-            addMandatoryTypeGroup("Добровольная сертификация", 2, entityPrefix, "B",
-                    businessLineTypes, accreditationLine);
-        } else {
-            addWithoutGroups(accreditationLine);
-        }
+
     }
 
     private String setEntityPrefix(int id) {
@@ -85,7 +69,7 @@ public class AddressPdfDatasource {
                 .collect(Collectors.toList());
 
         List<AccreditationAreaPdfDatasource> areas = businessLineTypes.stream()
-                .filter(type -> id.equals(type.getMandatoryType().getId()) && typeIds.contains(type.getId()))
+                .filter(type -> id.equals(type.getId()) && typeIds.contains(type.getId()))
                 .map(type -> {
                     Optional<AccreditationAreas> accreditationArea = accreditationLine.getAccreditationAreas().stream()
                             .filter(area -> area.getBusinessLineType().getId().equals(type.getId()))
