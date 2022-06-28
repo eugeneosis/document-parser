@@ -1,7 +1,10 @@
 package ru.fau.nia.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
@@ -11,6 +14,10 @@ import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.fau.nia.dto.AccreditationItem;
+import ru.fau.nia.dto.Declaration;
+import ru.fau.nia.dto.item.DictionaryDto;
+import ru.fau.nia.dto.item.Item;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -18,17 +25,14 @@ import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class DocumentService {
-
-    Pattern alPattern = Pattern.compile("RA\\.RU\\.", Pattern.CASE_INSENSITIVE);
-    Pattern gostPattern = Pattern.compile("^.*\\sГОСТ\\s.*0.*$", Pattern.CASE_INSENSITIVE);
-    //Pattern gostPattern = Pattern.compile(", ", Pattern.CASE_INSENSITIVE);
 
     public static final String FILE_NAME = "Список акредитованных лиц.txt";
 
@@ -46,73 +50,65 @@ public class DocumentService {
     @SneakyThrows
     public void parseFiles(File dir) {
         File[] files = dir.listFiles();
-        File fileText = new File(FILE_NAME);
-        Set<String> alList = new HashSet<>();
+
         for (File file : Objects.requireNonNull(files)) {
             if (file.isDirectory()) {
                 parseFiles(file);
             } else {
                 if (file.getName().endsWith((".pdf"))) {
                     System.out.println(file.getCanonicalPath());
-                    alList.add(extractText(file));
-                    FileWriter writer = new FileWriter(outputFilePath + fileText);
-                    if (!alList.isEmpty()) {
-                        writer.write(alList.toString());
-                        writer.close();
-                    }
+                    extractText(file);
                 }
             }
         }
     }
 
     @SneakyThrows
-    private String extractText(File file) {
+    private void extractText(File file) {
         createDir();
         PDDocument document = PDDocument.load(file);
         PDFTextStripper pdfStripper = new PDFTextStripper();
         String textFromDocument = pdfStripper.getText(document);
 
-        try{
-            PDDocumentCatalog catalog = document.getDocumentCatalog();
-            PDDocumentNameDictionary names = catalog.getNames();
-            PDEmbeddedFilesNameTreeNode embeddedFiles = names.getEmbeddedFiles();
-            Map<String, PDComplexFileSpecification> embeddedFileNames = embeddedFiles.getNames();
+        PDDocumentCatalog catalog = document.getDocumentCatalog();
+        PDDocumentNameDictionary names = catalog.getNames();
+        PDEmbeddedFilesNameTreeNode embeddedFiles = names.getEmbeddedFiles();
+        Map<String, PDComplexFileSpecification> embeddedFileNames = embeddedFiles.getNames();
 
-            for (Map.Entry<String, PDComplexFileSpecification> entry : embeddedFileNames.entrySet()) {
-                PDEmbeddedFile pdEmbeddedFile = getEmbeddedFile(entry.getValue());
-                String s = new String(pdEmbeddedFile.toByteArray(), Charset.defaultCharset());
-                String first = Arrays.stream(s.split("<pickedMethodologies>"))
-                        .findFirst().orElse("");
-                System.out.println(first);
+        for (Map.Entry<String, PDComplexFileSpecification> entry : embeddedFileNames.entrySet()) {
+            PDEmbeddedFile pdEmbeddedFile = getEmbeddedFile(entry.getValue());
+            String pdfToXml = new String(pdEmbeddedFile.toByteArray(), Charset.defaultCharset());
 
-                //You might need to configure the logger first
-                log.info("Inputfile: " + file +"Found embedded File: " + entry.getKey() + ":");
-            }
+            ObjectMapper objectMapper = new XmlMapper();
+            Declaration pojo = objectMapper.readValue(pdfToXml, Declaration.class);
+            System.out.println(pojo);
+            System.out.println(pdfToXml);
+            String value = pojo.getCertificateNumber().getValue();
+            System.out.println(value);
+            Item item = objectMapper.readValue(pdfToXml, Item.class);
+            List<String> collect = item.getValues().stream().map(ru.fau.nia.dto.item.Value::getCode).collect(Collectors.toList());
+            System.out.println(collect);
+            //printToFile(textFromDocument);
         }
-        catch (Exception e){
-            System.out.println("Document has no attachments. ");
-        }
-
-
-        //System.out.println(textFromDocument);
-        /*List<String> stringStream = textFromDocument.lines()
-                .filter(gostPattern.asPredicate())
-                .collect(Collectors.toList());*/
-        List<String> collect = textFromDocument.lines()
-                .filter(gostPattern.asPredicate())
-                .collect(Collectors.toList());
-
-        List<String> results = collect.stream()
-                .flatMap(input -> Arrays.stream(input.split("^.*\\sГОСТ\\s.*0.*$")))
-                //.filter(pairing -> pairing.startsWith(" "))
-                //.map(pairing -> pairing.replace(",", ""))
-                .collect(Collectors.toList());
-        System.out.println("-------------------------------------");
-        System.out.println(collect);
-        System.out.println("-------------------------------------");
-        //System.out.println(results);
         document.close();
-        return printToFile(textFromDocument);
+    }
+
+    @SneakyThrows
+    private void printToFile(String textFromDocument) {
+        File file = new File(FILE_NAME);
+        FileWriter writer = new FileWriter(outputFilePath + file);
+
+        ObjectMapper objectMapper = new XmlMapper();
+        Declaration pojo = objectMapper.readValue(textFromDocument, Declaration.class);
+        System.out.println(pojo);
+
+        writer.write(String.valueOf(pojo));
+        writer.close();
+    }
+
+    @SneakyThrows
+    private void createDir() {
+        Files.createDirectories(Path.of(outputFilePath));
     }
 
     private static PDEmbeddedFile getEmbeddedFile(PDComplexFileSpecification fileSpec) {
@@ -133,18 +129,5 @@ public class DocumentService {
             }
         }
         return embeddedFile;
-    }
-
-    @SneakyThrows
-    private String printToFile(String textFromDocument) {
-        return textFromDocument.lines()
-                .filter(alPattern.asPredicate())
-                .findFirst()
-                .orElse("");
-    }
-
-    @SneakyThrows
-    private void createDir() {
-        Files.createDirectories(Path.of(outputFilePath));
     }
 }

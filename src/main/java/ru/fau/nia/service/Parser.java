@@ -12,48 +12,46 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class Parser {
-    private static final String FILENAME = "/Users/evgeny/Library/Application Support/JetBrains/IntelliJIdea2021.3/scratches/test.xml";
+    private static final String FILENAME = "C:\\Users\\rak_e.d.osis\\AppData\\Roaming\\JetBrains\\IntelliJIdea2021.1\\scratches\\test.xml";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document document = builder.parse(new File(FILENAME));
+        document.getDocumentElement().normalize();
 
-        try {
-            DocumentBuilder db = dbf.newDocumentBuilder();
+        NodeList list = document.getElementsByTagName("declaration");
 
-            Document doc = db.parse(new File(FILENAME));
+        printElements(list);
+    }
 
-            doc.getDocumentElement().normalize();
+    private static void printElements(NodeList list) {
+        for (int i = 0; i < list.getLength(); i++) {
+            Node node = list.item(i);
 
-            NodeList list = doc.getElementsByTagName("certificateNumber");
-            NodeList list2 = doc.getElementsByTagName("selected");
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element element = (Element) node;
 
-            for (int i = 0; i < list.getLength(); i++) {
-                for (int j = 0; j < list.getLength(); j++) {
+                String certificateNumber = element.getElementsByTagName("name").item(0).getTextContent();
+                String pickedMethodologies = element.getElementsByTagName("pickedMethodologies").item(0).getTextContent();
+                List<String> gosts = pickedMethodologies.lines()
+                        .filter(x -> x.contains("ГОСТ "))
+                        .map(String::trim)
+                        .map(x -> x.replaceAll("^ГОСТ\\s\\d\\d\\d\\d\\d-\\d\\d\\s.*$",""))
+                        .map(x -> x.replaceAll("^ГОСТ\\sР$",""))
+                        .map(x -> x.replaceAll(", $", ""))
+                        .collect(Collectors.toList());
 
-                    Node node = list.item(i);
-                    Node node2 = list2.item(j);
-
-                    if (node.getNodeType() == Node.ELEMENT_NODE || node2.getNodeType() == Node.ELEMENT_NODE) {
-                        Element element = (Element) node;
-                        Element element2 = (Element) node2;
-
-                        String name = element.getElementsByTagName("name").item(0).getTextContent();
-                        String code = element2.getElementsByTagName("code").item(0).getTextContent();
-
-                        System.out.println("Current Element: " + node.getNodeName());
-                        System.out.println("certificateNumber: " + name);
-                        System.out.println("---------------------------------------");
-                        System.out.println("Current Element: " + node2.getNodeName());
-                        System.out.println("code: " + code);
-                    }
-                }
+                System.out.println("Акредитованное лицо: " + certificateNumber);
+                System.out.println("Список ГОСТ: " + gosts);
+                System.out.println("---------------------------------------");
             }
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
         }
     }
 }
