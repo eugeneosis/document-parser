@@ -28,13 +28,14 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Slf4j
 public class DocumentService {
 
     public static final String FILE_NAME = "Список акредитованных лиц.txt";
+
+    File file = new File(FILE_NAME);
 
     @Value("${inputFolder.path}")
     private String folderPath;
@@ -43,21 +44,31 @@ public class DocumentService {
     private String outputFilePath;
 
     @PostConstruct
+    @SneakyThrows
     public void parseFiles() {
-        parseFiles(new File(folderPath));
+        boolean exists = new File(outputFilePath + file).exists();
+        if (exists) {
+            new File(outputFilePath + file).delete();
+        }
+        FileWriter writer = new FileWriter(outputFilePath + file, true);
+
+        parseFiles(new File(folderPath), writer);
+
+        writer.flush();
+        writer.close();
     }
 
     @SneakyThrows
-    public void parseFiles(File dir) {
+    public void parseFiles(File dir, FileWriter writer) {
         File[] files = dir.listFiles();
 
         for (File file : Objects.requireNonNull(files)) {
             if (file.isDirectory()) {
-                parseFiles(file);
+                parseFiles(file, writer);
             } else {
                 if (file.getName().endsWith((".pdf"))) {
                     System.out.println(file.getCanonicalPath());
-                    extractText(file);
+                    extractText(file, writer);
                     System.out.println("===========================================================");
                 }
             }
@@ -65,42 +76,45 @@ public class DocumentService {
     }
 
     @SneakyThrows
-    private void extractText(File file) {
+    private void extractText(File file, FileWriter writer) {
         createDir();
         PDDocument document = PDDocument.load(file);
         PDFTextStripper pdfStripper = new PDFTextStripper();
-        String textFromDocument = pdfStripper.getText(document);
+        pdfStripper.getText(document);
 
-        PDDocumentCatalog catalog = document.getDocumentCatalog();
-        PDDocumentNameDictionary names = catalog.getNames();
-        PDEmbeddedFilesNameTreeNode embeddedFiles = names.getEmbeddedFiles();
-        Map<String, PDComplexFileSpecification> embeddedFileNames = embeddedFiles.getNames();
+        Map<String, PDComplexFileSpecification> embeddedFileNames = convertDocument(document);
 
-        for (Map.Entry<String, PDComplexFileSpecification> entry : embeddedFileNames.entrySet()) {
-            PDEmbeddedFile pdEmbeddedFile = getEmbeddedFile(entry.getValue());
-            String pdfToXml = new String(pdEmbeddedFile.toByteArray(), Charset.defaultCharset());
+        iterateDocument(embeddedFileNames, writer);
 
-            printToFile(pdfToXml);
-        }
         document.close();
     }
 
     @SneakyThrows
-    private void printToFile(String pdfToXml) {
-        File file = new File(FILE_NAME);
-        FileWriter writer = new FileWriter(outputFilePath + file, true);
+    private void iterateDocument(Map<String, PDComplexFileSpecification> embeddedFileNames, FileWriter writer) {
+        for (Map.Entry<String, PDComplexFileSpecification> entry : embeddedFileNames.entrySet()) {
+            PDEmbeddedFile pdEmbeddedFile = getEmbeddedFile(entry.getValue());
+            String pdfToXml = new String(pdEmbeddedFile.toByteArray(), Charset.defaultCharset());
+            printValuesToFile(pdfToXml, writer);
+        }
+    }
 
+    @SneakyThrows
+    private Map<String, PDComplexFileSpecification> convertDocument(PDDocument document) {
+        PDDocumentCatalog catalog = document.getDocumentCatalog();
+        PDDocumentNameDictionary names = catalog.getNames();
+        PDEmbeddedFilesNameTreeNode embeddedFiles = names.getEmbeddedFiles();
+        Map<String, PDComplexFileSpecification> embeddedFileNames = embeddedFiles.getNames();
+        return embeddedFileNames;
+    }
+
+    @SneakyThrows
+    private void printValuesToFile(String pdfToXml, FileWriter writer) {
         ObjectMapper objectMapper = new XmlMapper();
         Declaration pojo = objectMapper.readValue(pdfToXml, Declaration.class);
         String certificateNumberName = pojo.getCertificateNumber().getValue();
-        AtomicReference<String> certificateNumberNameResult = new AtomicReference<>();
-        certificateNumberNameResult.set(certificateNumberName);
         System.out.println(certificateNumberName);
         writer.write("====================================================" + System.lineSeparator());
         writer.write(certificateNumberName + System.lineSeparator());
-        //writer.write("====================================================" + System.lineSeparator());
-
-        AtomicReference<String> codeResult = new AtomicReference<>();
 
         Collection<AccreditationLine> accreditationLines = pojo.getAccreditationLines();
         accreditationLines.forEach((accreditationLine -> accreditationLine.getAccreditationAreas()
@@ -112,17 +126,14 @@ public class DocumentService {
                                         if (value instanceof DictionaryDto) {
                                             String code = ((DictionaryDto) value).getCode();
                                             System.out.println(code);
-                                            codeResult.set(code);
                                             try {
-                                                writer.write(codeResult + System.lineSeparator());
+                                                writer.write(code + System.lineSeparator());
                                             } catch (IOException e) {
                                                 e.printStackTrace();
                                             }
                                         }
                                     }
                                 })))));
-        writer.flush();
-        writer.close();
     }
 
     @SneakyThrows
