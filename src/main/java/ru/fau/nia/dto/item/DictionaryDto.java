@@ -2,18 +2,15 @@ package ru.fau.nia.dto.item;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import ru.fau.nia.entity.DictNormDocType;
 
 import java.util.Date;
 
 @Data
+@JacksonXmlRootElement(localName = "certificateNumber")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DictionaryDto {
     private Integer id;

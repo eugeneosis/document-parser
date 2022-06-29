@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
@@ -14,22 +13,22 @@ import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.fau.nia.dto.AccreditationItem;
+import ru.fau.nia.dto.AccreditationLine;
 import ru.fau.nia.dto.Declaration;
 import ru.fau.nia.dto.item.DictionaryDto;
-import ru.fau.nia.dto.item.Item;
-import ru.fau.nia.dto.item.ItemValue;
+import ru.fau.nia.dto.item.NormativeDocumentItem;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Slf4j
@@ -59,6 +58,7 @@ public class DocumentService {
                 if (file.getName().endsWith((".pdf"))) {
                     System.out.println(file.getCanonicalPath());
                     extractText(file);
+                    System.out.println("===========================================================");
                 }
             }
         }
@@ -80,32 +80,48 @@ public class DocumentService {
             PDEmbeddedFile pdEmbeddedFile = getEmbeddedFile(entry.getValue());
             String pdfToXml = new String(pdEmbeddedFile.toByteArray(), Charset.defaultCharset());
 
-            ObjectMapper objectMapper = new XmlMapper();
-            Declaration pojo = objectMapper.readValue(pdfToXml, Declaration.class);
-            //System.out.println(pojo);
-            //System.out.println(pdfToXml);
-            String value = pojo.getCertificateNumber().getValue();
-            System.out.println(value);
-            AccreditationItem item = objectMapper.readValue(pdfToXml, AccreditationItem.class);
-
-            List<String> collect = item.getItems().stream().map(Item::getCode).collect(Collectors.toList());
-
-            System.out.println(collect);
-            //printToFile(textFromDocument);
+            printToFile(pdfToXml);
         }
         document.close();
     }
 
     @SneakyThrows
-    private void printToFile(String textFromDocument) {
+    private void printToFile(String pdfToXml) {
         File file = new File(FILE_NAME);
-        FileWriter writer = new FileWriter(outputFilePath + file);
+        FileWriter writer = new FileWriter(outputFilePath + file, true);
 
         ObjectMapper objectMapper = new XmlMapper();
-        Declaration pojo = objectMapper.readValue(textFromDocument, Declaration.class);
-        System.out.println(pojo);
+        Declaration pojo = objectMapper.readValue(pdfToXml, Declaration.class);
+        String certificateNumberName = pojo.getCertificateNumber().getValue();
+        AtomicReference<String> certificateNumberNameResult = new AtomicReference<>();
+        certificateNumberNameResult.set(certificateNumberName);
+        System.out.println(certificateNumberName);
+        writer.write("====================================================" + System.lineSeparator());
+        writer.write(certificateNumberName + System.lineSeparator());
+        //writer.write("====================================================" + System.lineSeparator());
 
-        writer.write(String.valueOf(pojo));
+        AtomicReference<String> codeResult = new AtomicReference<>();
+
+        Collection<AccreditationLine> accreditationLines = pojo.getAccreditationLines();
+        accreditationLines.forEach((accreditationLine -> accreditationLine.getAccreditationAreas()
+                .forEach(accreditationAreas -> accreditationAreas.getAccreditationItems()
+                        .forEach(accreditationItem -> accreditationItem.getItems()
+                                .forEach(item -> {
+                                    if (item instanceof NormativeDocumentItem) {
+                                        Object value = item.getValue().getValue();
+                                        if (value instanceof DictionaryDto) {
+                                            String code = ((DictionaryDto) value).getCode();
+                                            System.out.println(code);
+                                            codeResult.set(code);
+                                            try {
+                                                writer.write(codeResult + System.lineSeparator());
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                })))));
+        writer.flush();
         writer.close();
     }
 

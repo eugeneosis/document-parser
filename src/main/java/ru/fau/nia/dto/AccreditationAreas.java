@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 import ru.fau.nia.entity.DictBusinessLineType;
 
