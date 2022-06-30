@@ -25,9 +25,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -43,33 +41,35 @@ public class DocumentService {
     @Value("${outputFile.path}")
     private String outputFilePath;
 
+    @Value("${gost.list}")
+    private List<String> gostsList;
+
     @PostConstruct
     @SneakyThrows
     public void parseFiles() {
         boolean exists = new File(outputFilePath + file).exists();
-        if (exists) {
-            new File(outputFilePath + file).delete();
-        }
+        if (exists) { new File(outputFilePath + file).delete(); }
+
         FileWriter writer = new FileWriter(outputFilePath + file, true);
 
-        parseFiles(new File(folderPath), writer);
+        getFiles(new File(folderPath), writer);
 
         writer.flush();
         writer.close();
     }
 
     @SneakyThrows
-    public void parseFiles(File dir, FileWriter writer) {
+    public void getFiles(File dir, FileWriter writer) {
         File[] files = dir.listFiles();
 
         for (File file : Objects.requireNonNull(files)) {
             if (file.isDirectory()) {
-                parseFiles(file, writer);
+                getFiles(file, writer);
             } else {
                 if (file.getName().endsWith((".pdf"))) {
-                    System.out.println(file.getCanonicalPath());
+                    log.info(file.getCanonicalPath());
                     extractText(file, writer);
-                    System.out.println("===========================================================");
+                    log.info("--------------------------------------------------------------------");
                 }
             }
         }
@@ -92,9 +92,9 @@ public class DocumentService {
     @SneakyThrows
     private void iterateDocument(Map<String, PDComplexFileSpecification> embeddedFileNames, FileWriter writer) {
         for (Map.Entry<String, PDComplexFileSpecification> entry : embeddedFileNames.entrySet()) {
-            PDEmbeddedFile pdEmbeddedFile = getEmbeddedFile(entry.getValue());
+            PDEmbeddedFile pdEmbeddedFile = checkEmbeddedFile(entry.getValue());
             String pdfToXml = new String(pdEmbeddedFile.toByteArray(), Charset.defaultCharset());
-            printValuesToFile(pdfToXml, writer);
+            printToFile(pdfToXml, writer);
         }
     }
 
@@ -103,17 +103,15 @@ public class DocumentService {
         PDDocumentCatalog catalog = document.getDocumentCatalog();
         PDDocumentNameDictionary names = catalog.getNames();
         PDEmbeddedFilesNameTreeNode embeddedFiles = names.getEmbeddedFiles();
-        Map<String, PDComplexFileSpecification> embeddedFileNames = embeddedFiles.getNames();
-        return embeddedFileNames;
+        return embeddedFiles.getNames();
     }
 
     @SneakyThrows
-    private void printValuesToFile(String pdfToXml, FileWriter writer) {
+    private void printToFile(String pdfToXml, FileWriter writer) {
         ObjectMapper objectMapper = new XmlMapper();
         Declaration pojo = objectMapper.readValue(pdfToXml, Declaration.class);
         String certificateNumberName = pojo.getCertificateNumber().getValue();
-        System.out.println(certificateNumberName);
-        writer.write("====================================================" + System.lineSeparator());
+        writer.write("--------------------------------------------------------------------" + System.lineSeparator());
         writer.write(certificateNumberName + System.lineSeparator());
 
         Collection<AccreditationLine> accreditationLines = pojo.getAccreditationLines();
@@ -125,9 +123,10 @@ public class DocumentService {
                                         Object value = item.getValue().getValue();
                                         if (value instanceof DictionaryDto) {
                                             String code = ((DictionaryDto) value).getCode();
-                                            System.out.println(code);
                                             try {
-                                                writer.write(code + System.lineSeparator());
+                                                if (gostsList.contains(code)) {
+                                                    writer.write(code + System.lineSeparator());
+                                                }
                                             } catch (IOException e) {
                                                 e.printStackTrace();
                                             }
@@ -137,11 +136,9 @@ public class DocumentService {
     }
 
     @SneakyThrows
-    private void createDir() {
-        Files.createDirectories(Path.of(outputFilePath));
-    }
+    private void createDir() { Files.createDirectories(Path.of(outputFilePath)); }
 
-    private static PDEmbeddedFile getEmbeddedFile(PDComplexFileSpecification fileSpec) {
+    private static PDEmbeddedFile checkEmbeddedFile(PDComplexFileSpecification fileSpec) {
         PDEmbeddedFile embeddedFile = null;
         if (fileSpec != null) {
             embeddedFile = fileSpec.getEmbeddedFileUnicode();
